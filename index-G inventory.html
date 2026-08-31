@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f6f9;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dark-mode {
+            background: #121212;
+            color: #ffffff;
+        }
+
+        .dark-mode .card,
+        .dark-mode .table,
+        .dark-mode .form-control,
+        .dark-mode .form-select {
+            background: #1f1f1f;
+            color: #ffffff;
+            border-color: #333;
+        }
+
+        .dark-mode .table-dark {
+            background-color: #000;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-card {
+            text-align: center;
+        }
+
+        .table-warning-custom {
+            background-color: #fff3cd !important;
+        }
+
+        footer {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+        <h3 class="text-white m-0">Inventory Management System</h3>
+        <button class="btn btn-light" id="darkBtn" type="button">Dark Mode</button>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- Dashboard Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card dashboard-card p-3">
+                <h6>Total Products</h6>
+                <h2 id="totalProducts">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card p-3">
+                <h6>Total Quantity</h6>
+                <h2 id="totalQty">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card p-3">
+                <h6>Total Value</h6>
+                <h2 id="totalValue">₹0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card p-3">
+                <h6>Low Stock</h6>
+                <h2 id="lowStock">0</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Form Section -->
+        <div class="col-lg-4 mb-4">
+            <div class="card p-3">
+                <h4 id="formTitle">Add Product</h4>
+                <form id="productForm">
+                    <input type="hidden" id="editId">
+
+                    <div class="mb-2">
+                        <label for="name" class="form-label visually-hidden">Product Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Product Name" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="category" class="form-label visually-hidden">Category</label>
+                        <select id="category" class="form-select">
+                            <option value="Electronics">Electronics</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Stationery">Stationery</option>
+                            <option value="Books">Books</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="qty" class="form-label visually-hidden">Quantity</label>
+                        <input type="number" id="qty" class="form-control" placeholder="Quantity" min="0" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="price" class="form-label visually-hidden">Price</label>
+                        <input type="number" id="price" class="form-control" placeholder="Price" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" id="saveBtn" class="btn btn-success w-100">Save Product</button>
+                        <button type="button" id="cancelBtn" class="btn btn-secondary w-100 d-none">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table & Actions Section -->
+        <div class="col-lg-8">
+            <div class="card p-3">
+                <div class="row mb-3 g-2">
+                    <div class="col-md-4">
+                        <input type="text" id="search" class="form-control" placeholder="Search Product">
+                    </div>
+                    <div class="col-md-3">
+                        <select id="filterCategory" class="form-select">
+                            <option value="All">All Categories</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Stationery">Stationery</option>
+                            <option value="Books">Books</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-warning w-100" id="exportBtn" type="button">CSV</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-info w-100" id="printBtn" type="button">Print</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white text-center p-3">
+    Inventory Management System &copy; 2026
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script-G inventory.js"></script>
+</body>
+</html>
